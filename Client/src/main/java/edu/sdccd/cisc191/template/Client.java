@@ -1,51 +1,100 @@
 package edu.sdccd.cisc191.template;
 
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.net.Socket;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 
-/**
- * This program opens a connection to a computer specified
- * as the first command-line argument.  If no command-line
- * argument is given, it prompts the user for a computer
- * to connect to.  The connection is made to
- * the port specified by LISTENING_PORT.  The program reads one
- * line of text from the connection and then closes the
- * connection.  It displays the text that it read on
- * standard output.  This program is meant to be used with
- * the server program, DateServer, which sends the current
- * date and time on the computer where the server is running.
- */
+/** Deals with all the Client-side actions (frontend) such as explaining game, communicating
+ * with the user through console, collecting user guesses, revealing round info to user. Based
+ * on Prof's Server/Client template.
+ * Module 5: Polymorphism, overriding
+ * Module 6: Interfaces
+ * Module 8: Networking */
 
-public class Client {
+public class Client extends Communication implements Connection {
     private Socket clientSocket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private String ip;
+    static int nguesses = 3; // three guesses
+    static int nrounds;
+    static LinkedHashMap<String, String[]> guessMap;
+    public Client(String IP) {
+        ip = IP;
+    }
 
-    public void startConnection(String ip, int port) throws IOException {
+    @Override
+    public void start(int port) throws IOException {
         clientSocket = new Socket(ip, port);
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     }
-
-    public CustomerResponse sendRequest() throws Exception {
-        out.println(CustomerRequest.toJSON(new CustomerRequest(1)));
-        return CustomerResponse.fromJSON(in.readLine());
-    }
-
-    public void stopConnection() throws IOException {
-        in.close();
-        out.close();
+    @Override
+    public void stop() throws IOException {
         clientSocket.close();
     }
-    public static void main(String[] args) {
-        Client client = new Client();
-        try {
-            client.startConnection("127.0.0.1", 4444);
-            System.out.println(client.sendRequest().toString());
-            client.stopConnection();
-        } catch(Exception e) {
-            e.printStackTrace();
+
+    /** Client side main explains game and communicates with server side at appropriate times.
+     * Module 9: Collections HashMap
+     * Module 10: Linked data, HashMap is linked */
+    public static void main(String[] args) throws IOException {
+        Client client = new Client("localhost");
+        client.start(4444);
+
+        // get game's main words from server
+        MainWords mains = (MainWords) client.receive(client.clientSocket);
+        nrounds = mains.getList().length;
+
+        // explains game
+        System.out.println("This is a word game, for each round you will be given a main word, and then you will guess ");
+        System.out.println(UserWords.cardinals[nguesses - 1] + " words that are associated with that word. " +
+                "Your goal is to match as many words as ");
+        System.out.println("possible from a list of words commonly associated with that main word.");
+        System.out.println("Rules: ");
+        System.out.println("1. Compound words are okay, ex: \"ice cream\", but must be no longer than two words.");
+        System.out.println("2. Your guess cannot be a substring of the main word, ex: \"dino\" for \"DINOSAUR\".");
+        System.out.println("3. Your guess cannot contain the entire main word, ex: \"strawberry\" is not ");
+        System.out.println("allowed for \"BERRY\", but \"cherry\" is okay. \n" );
+
+        // get computer words from server (slowest part)
+        String[][] compsArray = (String[][]) client.receive(client.clientSocket);
+        System.out.println("GAME BEGINS");
+
+        /* Client side round loop: collects user guesses, sends guesses,
+        * receives round points, stores guesses and points in a LinkedHashMap,
+        * reveals round's results to user, repeats. */
+        UserWords users = new UserWords();
+        guessMap = new LinkedHashMap<>(); // Linked preserves order
+        int sumTotal = 0;
+        for (int i = 0; i < nrounds; i++) {
+            String[] userGuesses = users.collectGuesses(mains.getList()[i], nguesses, i + 1);
+            client.send(userGuesses, client.clientSocket);
+
+            int[] roundPts = (int[]) client.receive(client.clientSocket);
+
+            String[] array = new String[nguesses];
+            for (int j = 0; j < nguesses; j++) {
+                array[j] = userGuesses[j] + " (" + roundPts[j] + ") ";
+            }
+            sumTotal += Arrays.stream(roundPts).sum();
+            guessMap.put(mains.getList()[i], array);
+
+            users.roundReveal(mains.getList()[i], compsArray[i], userGuesses, roundPts);
         }
+
+        // Formats and displays the final table
+        System.out.printf("%n %n %s %n", UserWords.repeat("-", 80));
+        System.out.printf("%s SUMMARY TABLE %s", UserWords.repeat(" ",33), UserWords.repeat(" ", 33));
+        System.out.printf("%n %s %n", UserWords.repeat("-", 80));
+        for (String i : guessMap.keySet()) {
+            System.out.printf(" %-15s", i);
+            for (int j = 0; j < nguesses; j++) {
+                System.out.printf("%-20s", guessMap.get(i)[j]);
+            }
+            System.out.printf("%n %s %n", UserWords.repeat("-", 80));
+        }
+        System.out.println("Total Score = " + sumTotal);
+        System.out.println("(Out of a possible " + nrounds*nguesses + " points)");
+        System.out.println("END GAME");
+
+        client.stop();
     }
 } //end class Client
 
