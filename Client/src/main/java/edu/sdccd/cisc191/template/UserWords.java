@@ -59,15 +59,15 @@ public class UserWords extends WordList {
         Scanner stdin = new Scanner(System.in);
         String pointPlural = "";
 
-        // Asks and validates user response to whether they want to see common words list and executes
-        System.out.println("Would you like to see the common words list for this round? (Y/N): ");
+        // Asks and validates user response to whether they want to see computer words list and executes
+        System.out.println("Would you like to see the list of computer-generated words for this round? (Y/N): ");
         String seeList = stdin.nextLine().toLowerCase();
         while (!(occurs(seeList, "y")|(occurs(seeList, "n")))) {
             System.out.println("Please enter valid input (Y/N): ");
             seeList = stdin.nextLine().toLowerCase();
         }
         if (occurs(seeList,"y")) {
-            System.out.println("The common word list for " + main + " is: ");
+            System.out.println("The computer's list for " + main + " is: ");
             for (int i = 0; i < comps.length; i++) {
                 System.out.println(comps[i]);
             }
