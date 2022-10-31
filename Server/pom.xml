@@ -46,12 +46,6 @@
         </dependency>
         <dependency>
             <groupId>edu.sdccd.cisc191.template</groupId>
-            <artifactId>Client</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>edu.sdccd.cisc191.template</groupId>
             <artifactId>Common</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
