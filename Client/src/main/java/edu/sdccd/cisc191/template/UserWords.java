@@ -99,7 +99,7 @@ public class UserWords extends WordList {
                 + " for the round.");
     }
 
-    /** Recursive method to create a string of repeating characters.
+    /** Recursive method to create a string of repeating characters
      * Module 10: Recursion
      * @param str String you'd like to repeat
      * @param times Number of times to repeat
