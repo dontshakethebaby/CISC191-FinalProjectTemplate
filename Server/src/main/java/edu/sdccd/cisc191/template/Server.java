@@ -14,7 +14,6 @@ public class Server extends Communication implements Connection {
     private Socket clientSocket;
     static int level = 20;
     static int nrounds = 3;
-    static String[][] compsArray;
 
         @Override
         public void start(int port) throws Exception {
