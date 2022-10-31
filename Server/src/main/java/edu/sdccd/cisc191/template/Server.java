@@ -34,7 +34,7 @@ public class Server extends Communication implements Connection {
 
         // generates and sends the mainwords for the game
         MainWords mains = new MainWords(nrounds);
-        server.send(mains, server.clientSocket);
+        server.send(mains.getList(), server.clientSocket);
 
         // gets and sends the computer words for the game
         ComputerWords comps = new ComputerWords(mains, level);

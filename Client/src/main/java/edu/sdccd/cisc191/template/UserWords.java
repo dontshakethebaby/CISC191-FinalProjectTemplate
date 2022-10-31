@@ -29,13 +29,13 @@ public class UserWords extends WordList {
 
             /* Validity checks for user input, re-prompt and replace userWord if it's > 2 words
             long or is a (weak) substring of the main word, or contains full main word */
-            while ((ComputerWords.occurs(mainWord.toLowerCase(),userWord))|(userWord.split(" ").length > 2)
-                    |(ComputerWords.occurs(userWord, mainWord.toLowerCase()))) {
+            while ((occurs(mainWord.toLowerCase(),userWord))|(userWord.split(" ").length > 2)
+                    |(occurs(userWord, mainWord.toLowerCase()))) {
                 if (userWord.split(" ").length > 2) {
                     System.out.println("Too many words entered, please provide a guess that is two words or less: ");
                     userWord = stdin.nextLine();
                 }
-                else if (ComputerWords.occurs(userWord, mainWord.toLowerCase())) {
+                else if (occurs(userWord, mainWord.toLowerCase())) {
                     System.out.println("Please give a word that does not contain the main word: ");
                     userWord = stdin.nextLine();
                 }
@@ -62,11 +62,11 @@ public class UserWords extends WordList {
         // Asks and validates user response to whether they want to see common words list and executes
         System.out.println("Would you like to see the common words list for this round? (Y/N): ");
         String seeList = stdin.nextLine().toLowerCase();
-        while (!(ComputerWords.occurs(seeList, "y")|(ComputerWords.occurs(seeList, "n")))) {
+        while (!(occurs(seeList, "y")|(occurs(seeList, "n")))) {
             System.out.println("Please enter valid input (Y/N): ");
             seeList = stdin.nextLine().toLowerCase();
         }
-        if (ComputerWords.occurs(seeList,"y")) {
+        if (occurs(seeList,"y")) {
             System.out.println("The common word list for " + main + " is: ");
             for (int i = 0; i < comps.length; i++) {
                 System.out.println(comps[i]);

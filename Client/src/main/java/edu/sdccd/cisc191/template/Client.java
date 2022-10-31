@@ -39,8 +39,8 @@ public class Client extends Communication implements Connection {
         client.start(4444);
 
         // get game's main words from server
-        MainWords mains = (MainWords) client.receive(client.clientSocket);
-        nrounds = mains.getList().length;
+        String[] mains = (String[]) client.receive(client.clientSocket);
+        nrounds = mains.length;
 
         // explains game
         System.out.println("This is a word game, for each round you will be given a main word, and then you will guess ");
@@ -64,7 +64,7 @@ public class Client extends Communication implements Connection {
         guessMap = new LinkedHashMap<>(); // Linked preserves order
         int sumTotal = 0;
         for (int i = 0; i < nrounds; i++) {
-            String[] userGuesses = users.collectGuesses(mains.getList()[i], nguesses, i + 1);
+            String[] userGuesses = users.collectGuesses(mains[i], nguesses, i + 1);
             client.send(userGuesses, client.clientSocket);
 
             int[] roundPts = (int[]) client.receive(client.clientSocket);
@@ -74,9 +74,9 @@ public class Client extends Communication implements Connection {
                 array[j] = userGuesses[j] + " (" + roundPts[j] + ") ";
             }
             sumTotal += Arrays.stream(roundPts).sum();
-            guessMap.put(mains.getList()[i], array);
+            guessMap.put(mains[i], array);
 
-            users.roundReveal(mains.getList()[i], compsArray[i], userGuesses, roundPts);
+            users.roundReveal(mains[i], compsArray[i], userGuesses, roundPts);
         }
 
         // Formats and displays the final table
