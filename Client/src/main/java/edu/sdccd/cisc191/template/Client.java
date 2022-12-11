@@ -29,7 +29,7 @@ public class Client extends Communication implements Connection {
         clientSocket.close();
     }
 
-    /** Client side main explains game and communicates with server side at appropriate times. */
+    /** Client side main explains game and communicates with server side at appropriate times */
     public static void main(String[] args) throws IOException {
         Client client = new Client("localhost");
         client.start(4444);
