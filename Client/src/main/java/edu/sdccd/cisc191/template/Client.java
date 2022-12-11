@@ -7,12 +7,10 @@ import java.util.LinkedHashMap;
 
 /** Deals with all the Client-side actions (frontend) such as explaining game, communicating
  * with the user through console, collecting user guesses, revealing round info to user. Based
- * on Prof's Server/Client template.
- * Module 5: Polymorphism, overriding
- * Module 6: Interfaces
- * Module 8: Networking */
+ * on Prof's Server/Client template. */
 
 public class Client extends Communication implements Connection {
+    int identification;
     private Socket clientSocket;
     private String ip;
     static int nguesses = 3; // three guesses
@@ -31,30 +29,26 @@ public class Client extends Communication implements Connection {
         clientSocket.close();
     }
 
-    /** Client side main explains game and communicates with server side at appropriate times.
-     * Module 9: Collections HashMap
-     * Module 10: Linked data, HashMap is linked */
+    /** Client side main explains game and communicates with server side at appropriate times. */
     public static void main(String[] args) throws IOException {
         Client client = new Client("localhost");
         client.start(4444);
 
         // get game's main words from server
         String[] mains = (String[]) client.receive(client.clientSocket);
+        System.out.println("HERE");
         nrounds = mains.length;
 
         // explains game
         System.out.println("This is a word game, for each round you will be given a main word, and then you will guess ");
-        System.out.println(UserWords.cardinals[nguesses - 1] + " words that are associated with that word. " +
-                "Your goal is to match as many words as ");
+        System.out.println(UserWords.cardinals[nguesses - 1] + " words that are associated with that word. ") ;
+        System.out.println("Another player will do the same with the same main words. Your goal is to match as many words as ");
         System.out.println("possible from a list of words commonly associated with that main word.");
         System.out.println("Rules: ");
         System.out.println("1. Compound words are okay, ex: \"ice cream\", but must be no longer than two words.");
         System.out.println("2. Your guess cannot be a substring of the main word, ex: \"dino\" for \"DINOSAUR\".");
         System.out.println("3. Your guess cannot contain the entire main word, ex: \"strawberry\" is not ");
         System.out.println("allowed for \"BERRY\", but \"cherry\" is okay. \n" );
-
-        // get computer words from server (slowest part)
-        String[][] compsArray = (String[][]) client.receive(client.clientSocket);
         System.out.println("GAME BEGINS");
 
         /* Client side round loop: collects user guesses, sends guesses,
@@ -67,6 +61,7 @@ public class Client extends Communication implements Connection {
             String[] userGuesses = users.collectGuesses(mains[i], nguesses, i + 1);
             client.send(userGuesses, client.clientSocket);
 
+            System.out.println("Waiting for other player's response...");
             int[] roundPts = (int[]) client.receive(client.clientSocket);
 
             String[] array = new String[nguesses];
@@ -76,7 +71,7 @@ public class Client extends Communication implements Connection {
             sumTotal += Arrays.stream(roundPts).sum();
             guessMap.put(mains[i], array);
 
-            users.roundReveal(mains[i], compsArray[i], userGuesses, roundPts);
+            users.roundReveal(mains[i], userGuesses, roundPts);
         }
 
         // Formats and displays the final table

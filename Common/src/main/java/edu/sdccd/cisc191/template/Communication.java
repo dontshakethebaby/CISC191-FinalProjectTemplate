@@ -19,7 +19,7 @@ public class Communication {
      * Module 8: Networking, serialization
      * @param obj Object to send
      * @param socket Where to send */
-    public void send(Object obj, Socket socket) throws IOException {
+     public void send(Object obj, Socket socket) throws IOException {
         out = new PrintWriter(socket.getOutputStream(), true);
         String json = JsonWriter.objectToJson(obj);
         out.println(json);
@@ -30,7 +30,7 @@ public class Communication {
      * Module 8: Networking, serialization
      * @param socket Where to receive from
      * @return The object that was received */
-    public Object receive(Socket socket) throws IOException {
+     public Object receive(Socket socket) throws IOException {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         Object obj = JsonReader.jsonToJava(in.readLine());
         return obj;

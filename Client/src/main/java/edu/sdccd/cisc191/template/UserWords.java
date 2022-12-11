@@ -52,28 +52,11 @@ public class UserWords extends WordList {
     /** Reveals round information to the user including computer words (optional), how many
      * words they matched, and points. Points are calculated elsewhere.
      * @param main The main word for current round
-     * @param comps The computer words for that main word
      * @param guesses User's guessed words
      * @roundPoints Calculated points for each user guess */
-    public void roundReveal(String main, String[] comps, String[] guesses, int[] roundPoints) {
+    public void roundReveal(String main, String[] guesses, int[] roundPoints) {
         Scanner stdin = new Scanner(System.in);
         String pointPlural = "";
-
-        // Asks and validates user response to whether they want to see computer words list and executes
-        System.out.println("Would you like to see the list of computer-generated words for this round? (Y/N): ");
-        String seeList = stdin.nextLine().toLowerCase();
-        while (!(occurs(seeList, "y")|(occurs(seeList, "n")))) {
-            System.out.println("Please enter valid input (Y/N): ");
-            seeList = stdin.nextLine().toLowerCase();
-        }
-        if (occurs(seeList,"y")) {
-            System.out.println("The computer's list for " + main + " is: ");
-            for (int i = 0; i < comps.length; i++) {
-                System.out.println(comps[i]);
-            }
-        }
-        else {
-        }
 
         // The guess by guess summary of points
         int sum = Arrays.stream(roundPoints).sum();
@@ -96,7 +79,7 @@ public class UserWords extends WordList {
             pointPlural = "points";
         }
         System.out.println("For a total of " + Arrays.stream(roundPoints).sum() + " " + pointPlural
-                + " for the round.");
+                + " for the round. \n");
     }
 
     /** Recursive method to create a string of repeating characters.

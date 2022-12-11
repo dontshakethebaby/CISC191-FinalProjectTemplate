@@ -1,5 +1,8 @@
 package edu.sdccd.cisc191.template;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /** Contains important methods for all types of WordLists: computer, main, and user.
  * Module 5: Abstract class */
 abstract class WordList {

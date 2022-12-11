@@ -20,4 +20,8 @@ public class KeepScore {
         return points;
     }
 
+    /*public static int[] lambdaPoints(String[] comps, String[] guesses) {
+        numbers.forEach( (n) -> { System.out.println(n); } );
+    }*/
+
 }
